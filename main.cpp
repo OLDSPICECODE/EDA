@@ -1,66 +1,88 @@
-#include<iostream>
-#include<vector>
-#include<string>
-#include <random>
-#include <time.h>
-#include <iomanip>
+#include <iostream>
+#include<stdlib.h>
+//3.3
+// Class CVector definition
+class CVector{
+  private:
+    int *m_pVect, // Pointer to the buffer
+    m_nCount, // Control how many elements are actually used
+    m_nMax, // Control how many are allocated as maximum
+    m_nDelta; // To control the growing
+    void Init(int delta); // Init our private variables, etc
+    void Resize(); // Resize the vector when occurs an overflow
+  public:
+    CVector(int delta = 10); // Constructor
+    void Insert(int elem); // Insert a new element
+  // More methods go here
+};
 
-using namespace std;
-
-int distancia(vector<int> punto_1, vector<int> punto_2) {
-    unsigned long long int result = 0;
-    for (int i = 0; i < punto_1.size(); i++) {
-        result += (punto_1[i] - punto_2[i]) * (punto_1[i] - punto_2[i]);
-    }
-    return sqrt(result);
+void CVector::Insert(int elem)
+{
+  if( m_nCount == m_nMax ) // Verify the overflow
+    Resize(); // Resize the vector before inserting elem
+  m_pVect[m_nCount++] = elem; // Insert the element at the end
 }
+//3.2
+struct Vector{
+  int*m_pVect, 
+  m_nCount, 
+  m_nMax,
+  m_nDelta;
 
-vector<int> generador(int dim) {
-    vector<int> result;
-    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    for (int i = 0; i < dim; i++) {
-        std::uniform_int_distribution<> distrib(1, 100);
-        result.push_back(distrib(gen));
-    }
-    return result;
+};
+void Resize(Vector *pThis,int gpVect[])
+  {
+    pThis->m_pVect = (int*)realloc(gpVect, sizeof(int) * (pThis->m_nMax + pThis->m_nDelta));
+    pThis->m_nMax += pThis->m_nDelta;
+  }
+  void Insert(Vector *pThis, int elem,int gpVect[])
+  {
+    if( pThis->m_nCount == pThis->m_nMax ) // Verify the overflow
+    Resize(pThis,gpVect); // Resize the vector before inserting elem
+    // Insert the element at the end of the sequence
+    pThis->m_pVect[pThis->m_nCount++] = elem;
+  }
+  
+
+//3,1,2
+/*void Resize(int gpVect[],int gnMax)
+{
+ const int delta = 10; // Used to increase the vector size
+  gpVect = (int *)realloc(gpVect, sizeof(int) * (gnMax + delta));
+} 
+
+void Insert_1(int elem,int &gnMax,int &gnCount,int gpVect[])
+{
+  if( gnCount == gnMax ) // There is no space at this moment for elem
+  Resize(gpVect,gnMax); // Resize the vector before inserting elem
+  gpVect[gnCount++] = elem; // Insert the element at the end of the sequence
 }
+//3.1.1
+void Insert(int elem,int &gnCount,int gVect[]){
+  if( gnCount < 100 ) // we can only insert if there is space
+    gVect[gnCount++] = elem; // Insert the element at the end
+}
+*/
 
 int main() {
-    srand(time(NULL));
-    int dim;
-    cout << "dimensiones: " << endl;
-    cin >> dim;
-    vector<vector<int>> puntos;
-    for (int i = 0; i < 20000; i++) {
-        puntos.push_back(generador(dim));
-    }
-    vector<int> dists;
-    for (int i = 0; i < 20000; i++) {
-        dists.push_back(distancia(puntos[0], puntos[i]));
-    }
-
-    for (int i = 0; i < puntos[0].size(); i++) {
-        cout << puntos[10000][i] << " ";
-    }
-    cout << endl;
-    vector<vector<int>> hist;
-    int cont = 0;
-    int aux = 0;
-    for (int i = 0; i < dists.size(); i++) {
-        if (dists[i] != -1) {
-            aux = dists[i];
-            for (int j = i; j < dists.size(); j++) {
-                if (dists[j] == aux) {
-                    cont += 1;
-                    dists[j] = -1;
-                }
-            }
-            hist.push_back({ aux,cont });
-            cont = 0;
-        }
-    }
-    for (int i = 0; i < hist.size(); i++) {
-        cout << hist[i][0] << " " << hist[i][1] << endl;
-    }
+  //3.1
+  int gVect[100]; 
+  int gnCount = 0;
+  /*Insert(3,gnCount,gVect);
+  for(int i =0;i<gnCount;i++){
+    std::cout<<gVect[i]<<std::endl;
+  }*/
+  //3.2
+  int *gpVect = NULL; 
+  /*gnCount = 0; 
+  int gnMax = 0;
+  Insert_1(3,gnMax,gnCount,gpVect);
+  for(int i=0;i<gnCount;i++){
+    std::cout<<*(gpVect+1)<<std::endl;
+  }*/
+  //3.2
+  Vector *v1;
+  Insert(v1,3,gpVect);
+  //3.3
+  CVector *v2;
 }
