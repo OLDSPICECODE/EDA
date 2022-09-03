@@ -1,0 +1,46 @@
+#include <iostream>
+#include <list>
+#include <vector> // without .h
+using namespace std;
+//3.8.2
+typedef float (*lpfnOperation)(float, float);
+
+float Addition(float a,float b){
+  return a+b;
+}
+
+float Subtraction(float a,float b){
+  return a-b;
+}
+
+float Multiplication(float a,float b){
+  return a*b;
+}
+
+float Division(float a,float b){
+  return a/b;
+}
+
+
+int main(int argc, char *argv[]) {
+  lpfnOperation vpf[4] = {&::Addition, &::Subtraction,&::Multiplication, &::Division};
+
+  
+ float a, b, c; int opt;
+// enter the operands
+cin >> a >> b;
+
+  
+// enter the operation 0-Addition, 1-Subtraction, 3-Multiplication, 4-Division
+cin >> opt;
+  while(b==0 && opt ==4){
+    cout<<"Para dividir B != 0" <<endl;
+  cin >> a >> b;
+}
+// The next line replaces the switch and replaces the whole switch
+c = (*vpf[opt])(a, b);
+
+  cout<<endl<<c<<endl;
+}
+
+
