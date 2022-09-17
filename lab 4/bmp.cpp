@@ -44,12 +44,36 @@ void img_distortion(bmpInfoHeader *info, unsigned char *img){
   for (y=info->height; y>0; y-=reduccionY){
       for (x=0; x<info->width; x+=reduccionX){
         
-      img[3*(x+y*info->width)] = 1;
-      img[3*(x+y*info->width)+1] = -1;
-      img[3*(x+y*info->width)+2] = 1;
+      img[3*(x+y*info->width)] *= -1;
+      img[3*(x+y*info->width)+1] *= -1;
+      img[3*(x+y*info->width)+2] *= -1;
         
     }
   }
+}
+
+void SaveBMP(char *filename, bmpInfoHeader *info, unsigned char *imgdata)
+{
+  bmpFileHeader header;
+  FILE *f;
+  uint16_t type;
+ 
+  f=fopen(filename, "w+");
+  header.size=info->imgsize+sizeof(bmpFileHeader)+sizeof(bmpInfoHeader);
+  /* header.resv1=0; */
+  /* header.resv2=1; */
+  /* El offset será el tamaño de las dos cabeceras + 2 (información de fichero)*/
+  header.offset=sizeof(bmpFileHeader)+sizeof(bmpInfoHeader)+2;
+  /* Escribimos la identificación del archivo */
+  type=0x4D42;
+  fwrite(&type, sizeof(type),1,f);
+  /* Escribimos la cabecera de fichero */
+  fwrite(&header, sizeof(bmpFileHeader),1,f);
+  /* Escribimos la información básica de la imagen */
+  fwrite(info, sizeof(bmpInfoHeader),1,f);
+  /* Escribimos la imagen */
+  fwrite(imgdata, info->imgsize, 1, f);
+  fclose(f);
 }
 
 int main()
@@ -67,7 +91,7 @@ int main()
   img_distortion(&info, img);
   DisplayInfo(&info);
   TextDisplay(&info, img);
-
+  SaveBMP((char*)"asd_2.bmp", &info, img);
   return 0;
 }
 
